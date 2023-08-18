@@ -12,25 +12,18 @@
         {
             Console.Clear();
             Console.WriteLine("마을에 오신 여러분 환영합니다!\n이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
-            string[] startMenu = new string[2] { "상태보기", "인벤토리" };
-            Console.WriteLine();
+            
+            Console.WriteLine("\n1.상태보기");
+            Console.WriteLine("2.인벤토리");
 
-            for (int i = 0; i < startMenu.Length; i++)
+            int userInput = GetUserInput();
+            switch (userInput)
             {
-                Console.WriteLine((i + 1) + "." + startMenu[i]);
-            }
-
-            string menuInput = GetUserInput();
-            switch (menuInput)
-            {
-                case "1":
+                case 1:
                     MyInfo();
                     break;
-                case "2":
+                case 2:
                     InventoryInfo();
-                    break;
-                default:
-                    Console.WriteLine("잘못된 입력입니다!");
                     break;
             }
         }
@@ -42,16 +35,14 @@
 
             Console.WriteLine("\n0.나가기");
 
-            string menuInput = GetUserInput();
-            switch (menuInput)
+            int userInput = GetUserInput();
+            while (userInput != 0)
             {
-                case "0":
-                    MainMenu();
-                    break;
-                default:
-                    Console.WriteLine("잘못된 입력입니다!");
-                    break;
+                Console.WriteLine("잘못된 입력입니다!");
+                userInput = GetUserInput();
             }
+
+            MainMenu();
         }
 
         static void InventoryInfo()
@@ -60,22 +51,40 @@
 
             Console.WriteLine("\n0.나가기");
 
-            string menuInput = GetUserInput();
-            switch (menuInput)
+            int userInput = GetUserInput();
+            while (userInput != 0)
             {
-                case "0":
-                    MainMenu();
-                    break;
-                default:
-                    Console.WriteLine("잘못된 입력입니다!");
-                    break;
+                Console.WriteLine("잘못된 입력입니다!");
+                userInput = GetUserInput();
             }
+
+            MainMenu();
         }
 
-        static string GetUserInput()
+        static int GetUserInput()
         {
-            Console.Write("\n원하시는 행동을 입력해주세요.\n>> ");
-            return Console.ReadLine();
+            while (true)
+            {
+                Console.Write("\n원하시는 행동을 입력해주세요.\n>> ");
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out int userInput))
+                {
+                    // 0,1,2가 입력되었을 때만 반환
+                    if (userInput == 0 || userInput == 1 || userInput ==2)
+                    {
+                        return userInput;
+                    } 
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다!");
+                }
+            }
         }
     }
 
