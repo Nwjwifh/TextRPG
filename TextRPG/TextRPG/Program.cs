@@ -1,10 +1,11 @@
 ﻿namespace TextRPG
 {
-    internal class Program
+    internal class GameManager
     {
         static void Main(string[] args)
         {
             MainMenu();
+            
         }
 
         static void MainMenu()
@@ -26,7 +27,7 @@
                     MyInfo();
                     break;
                 case "2":
-                    Console.WriteLine("인벤토리 입장");
+                    InventoryInfo();
                     break;
                 default:
                     Console.WriteLine("잘못된 입력입니다!");
@@ -37,7 +38,27 @@
         static void MyInfo()
         {
             Console.Clear();
-            Console.WriteLine("0.나가기");
+            Player player = new Player("김전사", "전사");
+
+            Console.WriteLine("\n0.나가기");
+
+            string menuInput = GetUserInput();
+            switch (menuInput)
+            {
+                case "0":
+                    MainMenu();
+                    break;
+                default:
+                    Console.WriteLine("잘못된 입력입니다!");
+                    break;
+            }
+        }
+
+        static void InventoryInfo()
+        {
+            Console.Clear();
+
+            Console.WriteLine("\n0.나가기");
 
             string menuInput = GetUserInput();
             switch (menuInput)
@@ -53,9 +74,42 @@
 
         static string GetUserInput()
         {
-            Console.WriteLine();
             Console.Write("\n원하시는 행동을 입력해주세요.\n>> ");
             return Console.ReadLine();
         }
+    }
+
+    class Player
+    {
+        public string Name;
+        public string Class;
+        public int Level;
+        public int Attack;
+        public int Defense;
+        public int Health;
+        public int Gold;
+
+        public Player(string name, string playerClass)
+        {
+            Name = name;
+            Class = playerClass;
+            Level = 1;
+            Attack = 10;
+            Defense = 5;
+            Health = 100;
+            Gold = 1500;
+            Console.WriteLine($"이름: {Name}");
+            Console.WriteLine($"직업: {Class}");
+            Console.WriteLine($"레벨: {Level}");
+            Console.WriteLine($"공격력: {Attack}");
+            Console.WriteLine($"방어력: {Defense}");
+            Console.WriteLine($"체력: {Health}");
+            Console.WriteLine($"골드: {Gold}");
+        }
+    }
+
+    class Item
+    {
+
     }
 }
