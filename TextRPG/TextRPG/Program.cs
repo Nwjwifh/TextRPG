@@ -1,124 +1,179 @@
-﻿namespace TextRPG
+﻿internal class Program
 {
-    internal class GameManager
+    private static Character player;
+    private static Inventory inventory;
+
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        GameDataSetting();
+        DisplayGameIntro();
+    }
+
+    static void GameDataSetting()
+    {
+        // 캐릭터 정보 세팅
+        player = new Character("Chad", "전사", 1, 10, 5, 100, 1500);
+        
+        // 아이템 정보 세팅
+        inventory = new Inventory();
+
+    }
+
+    static void DisplayGameIntro()
+    {
+        Console.Clear();
+
+        Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
+        Console.WriteLine("이곳에서 전전으로 들어가기 전 활동을 할 수 있습니다.");
+        Console.WriteLine();
+        Console.WriteLine("1.상태보기");
+        Console.WriteLine("2.인벤토리");
+        Console.WriteLine();
+        Console.WriteLine("원하시는 행동을 입력해주세요.");
+        Console.Write(">> ");
+
+        int input = CheckValidInput(1, 2);
+        switch (input)
         {
-            MainMenu();
-            
-        }
+            case 1:
+                DisplayMyInfo();
+                break;
 
-        static void MainMenu()
-        {
-            Console.Clear();
-            Console.WriteLine("마을에 오신 여러분 환영합니다!\n이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
-            
-            Console.WriteLine("\n1.상태보기");
-            Console.WriteLine("2.인벤토리");
-
-            int userInput = GetUserInput();
-            switch (userInput)
-            {
-                case 1:
-                    MyInfo();
-                    break;
-                case 2:
-                    InventoryInfo();
-                    break;
-            }
-        }
-
-        static void MyInfo()
-        {
-            Console.Clear();
-            Player player = new Player("김전사", "전사");
-
-            Console.WriteLine("\n0.나가기");
-
-            int userInput = GetUserInput();
-            while (userInput != 0)
-            {
-                Console.WriteLine("잘못된 입력입니다!");
-                userInput = GetUserInput();
-            }
-
-            MainMenu();
-        }
-
-        static void InventoryInfo()
-        {
-            Console.Clear();
-
-            Console.WriteLine("\n0.나가기");
-
-            int userInput = GetUserInput();
-            while (userInput != 0)
-            {
-                Console.WriteLine("잘못된 입력입니다!");
-                userInput = GetUserInput();
-            }
-
-            MainMenu();
-        }
-
-        static int GetUserInput()
-        {
-            while (true)
-            {
-                Console.Write("\n원하시는 행동을 입력해주세요.\n>> ");
-                string input = Console.ReadLine();
-
-                if (int.TryParse(input, out int userInput))
-                {
-                    // 0,1,2가 입력되었을 때만 반환
-                    if (userInput == 0 || userInput == 1 || userInput ==2)
-                    {
-                        return userInput;
-                    } 
-                    else
-                    {
-                        Console.WriteLine("잘못된 입력입니다!");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다!");
-                }
-            }
+            case 2:
+                // 작업해보기
+                DisplayInventory();
+                break;
         }
     }
 
-    class Player
+    static void DisplayMyInfo()
     {
-        public string Name;
-        public string Class;
-        public int Level;
-        public int Attack;
-        public int Defense;
-        public int Health;
-        public int Gold;
+        Console.Clear();
 
-        public Player(string name, string playerClass)
+        Console.WriteLine("상태보기");
+        Console.WriteLine("캐릭터의 정보를 표시합니다.");
+        Console.WriteLine();
+        Console.WriteLine($"Lv.{player.Level}");
+        Console.WriteLine($"{player.Name}({player.Job})");
+        Console.WriteLine($"공격력 :{player.Atk}");
+        Console.WriteLine($"방어력 : {player.Def}");
+        Console.WriteLine($"체력 : {player.Hp}");
+        Console.WriteLine($"Gold : {player.Gold} G");
+        Console.WriteLine();
+        Console.WriteLine("0.나가기");
+        Console.WriteLine("원하시는 행동을 입력해주세요.");
+        Console.Write(">> ");
+
+        int input = CheckValidInput(0, 0);
+        switch (input)
         {
-            Name = name;
-            Class = playerClass;
-            Level = 1;
-            Attack = 10;
-            Defense = 5;
-            Health = 100;
-            Gold = 1500;
-            Console.WriteLine($"이름: {Name}");
-            Console.WriteLine($"직업: {Class}");
-            Console.WriteLine($"레벨: {Level}");
-            Console.WriteLine($"공격력: {Attack}");
-            Console.WriteLine($"방어력: {Defense}");
-            Console.WriteLine($"체력: {Health}");
-            Console.WriteLine($"골드: {Gold}");
+            case 0:
+                DisplayGameIntro();
+                break;
         }
     }
 
-    class Item
+    static void DisplayInventory()
     {
+        Console.Clear();
 
+        Console.WriteLine("인벤토리");
+        Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+
+        inventory.DisplayItems();
+
+        Console.WriteLine("1.장착 관리");
+        Console.WriteLine("0.나가기");
+        Console.WriteLine("원하시는 행동을 입력해주세요.");
+        Console.Write(">> ");
+
+        int input = CheckValidInput(0, 1);
+        switch (input)
+        {
+            case 0:
+                DisplayGameIntro();
+                break;
+
+            case 1:
+                EquipInventory();
+                break;
+        }
+    }
+
+    static void EquipInventory()
+    {
+        Console.Clear();
+        Console.WriteLine("ㅎㅇ");
+    }
+
+    static int CheckValidInput(int min, int max)
+    {
+        while (true)
+        {
+            string input = Console.ReadLine();
+
+            bool parseSuccess = int.TryParse(input, out var ret);
+            if (parseSuccess)
+            {
+                if (ret >= min && ret <= max)
+                    return ret;
+            }
+
+            Console.WriteLine("잘못된 입력입니다.\n");
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+            Console.Write(">> ");
+        }
+    }
+}
+
+
+public class Character
+{
+    public string Name { get; }
+    public string Job { get; }
+    public int Level { get; }
+    public int Atk { get; }
+    public int Def { get; }
+    public int Hp { get; }
+    public int Gold { get; }
+
+    public Character(string name, string job, int level, int atk, int def, int hp, int gold)
+    {
+        Name = name;
+        Job = job;
+        Level = level;
+        Atk = atk;
+        Def = def;
+        Hp = hp;
+        Gold = gold;
+    }
+}
+
+public class Inventory
+{
+    private List<string> items; // 인벤토리 아이템을 담을 리스트
+
+    public Inventory()
+    {
+        items = new List<string>();
+        items.Add("-검 | 공격력 +2 | 그냥 검이다.");
+        items.Add("-갑옷 | 방어력 +5 | 그냥 갑옷이다");
+    }
+
+    public void DisplayItems()
+    {
+        if (items.Count == 0)
+        {
+            Console.WriteLine("인벤토리가 비어 있습니다.");
+        }
+        else
+        {
+            Console.WriteLine("[아이템 목록]");
+            foreach (string item in items)
+            {
+                Console.WriteLine(item);
+            }
+        }
+        Console.WriteLine();
     }
 }
