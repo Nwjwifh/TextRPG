@@ -3,8 +3,9 @@ using System.Numerics;
 
 internal class GameManager
 {
-    private static Character player; //캐릭터 객체
-    private static Inventory inventory; //인벤토리 객체
+    private static Character player;
+    private static Inventory inventory;
+    private static Shop shop;
 
 
     static void Main(string[] args)
@@ -19,6 +20,7 @@ internal class GameManager
         // 캐릭터 정보와 인벤토리 초기화
         player = new Character("김전사", "전사", 1, 10, 5, 100, 1500);
         inventory = new Inventory();
+        shop = new Shop();
 
     }
 
@@ -54,7 +56,7 @@ internal class GameManager
                 break;
             case 3:
                 Console.Beep(300, 200);
-                DisplayShop(player, inventory);
+                DisplayShop();
                 break;
         }
     }
@@ -138,7 +140,7 @@ internal class GameManager
         Console.WriteLine("원하시는 행동을 입력해주세요.");
         Console.Write(">> ");
 
-        int input = CheckValidInput(0, inventory.items.Count);
+        int input = CheckValidInput(0, shop.shopItems.Count);
         if (input == 0)
         {
             Console.Beep(300, 200);
@@ -150,13 +152,13 @@ internal class GameManager
         DisplayEquipInventory(); // 장착 상태에 따라 새로 업데이트된 창 표시
     }
 
-    static void DisplayShop(Character player, Inventory inventory)
+    static void DisplayShop()
     {
         Console.Clear();
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("[상점]");
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("가지고 있는 골드로 아이템을 구매할 수 있습니다.\n");
+        Console.WriteLine("골드로 아이템을 구매할 수 있습니다.\n");
         Console.ResetColor();
 
         Shop shop = new Shop();
@@ -177,7 +179,7 @@ internal class GameManager
 
         shop.BuyItem(input - 1, player, inventory); // 아이템 구매
         Thread.Sleep(1000);
-        DisplayShop(player, inventory);
+        DisplayShop();
     }
 
     //입력값 검사 메서드, min과 max는 유효한 입력값의 범위
@@ -212,7 +214,6 @@ internal class GameManager
 
 public class Character
 {
-
     public string Name { get; set; }
     public string Job { get; set; }
     public int Level { get; set; }
@@ -257,8 +258,8 @@ public class Character
 
         return $"{Name}(Lv.{Level})\n" +
                 $"직업    : {Job}\n" +
-                $"공격력  : {Atk,-2}{bonusAtkStr}\n" +
-                $"방어력  : {Def,-2}{bonusDefStr}\n" +
+                $"공격력  : {Atk}{bonusAtkStr}\n" +
+                $"방어력  : {Def}{bonusDefStr}\n" +
                 $"체력    : {Hp}\n" +
                 $"골드    : {Gold} G";
     }
@@ -292,7 +293,6 @@ public class Inventory
 {
     public List<Item> items; // 아이템 리스트
     
-
     public Inventory()
     {
         items = new List<Item>();
@@ -303,7 +303,6 @@ public class Inventory
     //인벤토리 아이템 리스트 출력
     public void DisplayItemsEquip(bool showItemNumbers)
     {
-
         var table = new ConsoleTable("Name", "Effects", "Description");
 
         for (int i = 0; i < items.Count; i++)
@@ -312,7 +311,6 @@ public class Inventory
             if (items[i].IsEquipped)
             {
                 equippedSign = "[E]";
-                
             }
 
             string itemNumber = "";
@@ -334,17 +332,17 @@ public class Inventory
     //특정 인덱스의 아이템의 장착 상태 변경
     public void ChangeEquip(int index, Character character)
     {
-        Item item = items[index]; // 선택한 아이템 가져오기
+        Item item = items[index]; // 아이템 클래스에서 선택한 아이템 가져오기
 
-        // 아이템의 장착 상태 변경(반전)
+        // 아이템의 장착 상태 변경
         item.IsEquipped = !item.IsEquipped;
 
-        if (item.IsEquipped)
+        if (item.IsEquipped) //장착 시 스탯 증가
         {
             character.Atk += item.BonusAtk;
             character.Def += item.BonusDef;
         }
-        else
+        else //장착 해제 시 스탯 감소
         {
             character.Atk -= item.BonusAtk;
             character.Def -= item.BonusDef;
@@ -354,13 +352,13 @@ public class Inventory
 
 public class Shop
 {
-    private List<Item> shopItems;
+    public List<Item> shopItems; //상점 아이템 리스트
 
     public Shop()
     {
         shopItems = new List<Item>();
         shopItems.Add(new Item("Wood Spear", "ATK+3", "A normal wood spear.", 3, 0, 50));
-        shopItems.Add(new Item("Iron Sword", "ATK+5", "A normal iron sword.", 5, 0, 100));
+        shopItems.Add(new Item("Iron Sword", "ATK+5", "A normal iron sword.", 5, 0, 1000));
         shopItems.Add(new Item("Iron Shield", "DEF+10", "A normal iron shield.", 0, 10, 150));
     }
 
@@ -368,7 +366,6 @@ public class Shop
     {
         var table = new ConsoleTable("Name", "Effects", "Description", "Price");
 
-        
         for (int i = 0; i < shopItems.Count; i++)
         {
             string itemName = $"{i + 1}.{shopItems[i].Name}";
@@ -383,17 +380,18 @@ public class Shop
 
     public void BuyItem(int index, Character player, Inventory inventory)
     {
-        Item selectedItem = shopItems[index]; // 선택한 상점 아이템 가져오기
+        Item selectedItem = shopItems[index]; // 아이템 클래스에서 선택한 상점 아이템 가져오기
 
         if (player.Gold >= selectedItem.Price) // 골드가 충분한지 확인
         {
             player.Gold -= selectedItem.Price; // 골드 차감
-            inventory.items.Add(selectedItem); // 아이템 추가
+            inventory.items.Add(selectedItem); // 인벤토리에 아이템 추가
+
             Console.Beep(300, 200);
             Console.WriteLine($"{selectedItem.Name}을(를) 구매했습니다.");
             Console.WriteLine($"남은 골드: {player.Gold} G");
         }
-        else
+        else //구매 불가능의 경우
         {
             Console.Beep();
             Console.WriteLine("골드가 부족합니다.");
