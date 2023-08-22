@@ -13,3 +13,5 @@ C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\obj\Debug\net6.0\ref
 C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\obj\Debug\net6.0\TextRPG.pdb
 C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\obj\Debug\net6.0\TextRPG.genruntimeconfig.cache
 C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\obj\Debug\net6.0\ref\TextRPG.dll
+C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\bin\Debug\net6.0\ConsoleTables.dll
+C:\Users\Administrator\source\repos\TextRPG\TextRPG\TextRPG\obj\Debug\net6.0\TextRPG.csproj.CopyComplete
