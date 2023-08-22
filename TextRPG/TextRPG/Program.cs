@@ -1,20 +1,23 @@
-﻿using System.Numerics;
+﻿using ConsoleTables;
+using System.Numerics;
 
 internal class GameManager
 {
     private static Character player; //캐릭터 객체
     private static Inventory inventory; //인벤토리 객체
 
+
     static void Main(string[] args)
     {
         GameDataSetting(); //게임 데이터 세팅
         DisplayGameIntro(); //게임 인트로 표시
+
     }
 
     static void GameDataSetting()
     {
         // 캐릭터 정보와 인벤토리 초기화
-        player = new Character("Chad", "전사", 1, 10, 5, 100, 1500);
+        player = new Character("김전사", "전사", 1, 10, 5, 100, 1500);
         inventory = new Inventory();
 
     }
@@ -23,25 +26,35 @@ internal class GameManager
     static void DisplayGameIntro()
     {
         Console.Clear();
-
-        Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("[스파르타 마을]");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
+        Console.ResetColor();
+
         Console.WriteLine();
         Console.WriteLine("1.상태보기");
         Console.WriteLine("2.인벤토리");
+        Console.WriteLine("3.상점");
         Console.WriteLine();
         Console.WriteLine("원하시는 행동을 입력해주세요.");
         Console.Write(">> ");
 
-        int input = CheckValidInput(1, 2);
+        int input = CheckValidInput(1, 3);
         switch (input)
         {
             case 1:
+                Console.Beep(300,200);
                 DisplayMyInfo(); //상태보기 창 표시
                 break;
 
             case 2:
+                Console.Beep(300, 200);
                 DisplayInventory(); //인벤토리 창 표시
+                break;
+            case 3:
+                Console.Beep(300, 200);
+                DisplayShop(player, inventory);
                 break;
         }
     }
@@ -50,6 +63,12 @@ internal class GameManager
     static void DisplayMyInfo()
     {
         Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("[상태보기]");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("캐릭터의 상태 정보가 표시됩니다.");
+        Console.WriteLine();
+        Console.ResetColor();
 
         Console.WriteLine(player.DisplayStats()); //캐릭터 정보 표시
 
@@ -63,6 +82,7 @@ internal class GameManager
         switch (input)
         {
             case 0:
+                Console.Beep(300, 200);
                 DisplayGameIntro(); //게임 인트로창으로 돌아감
                 break;
         }
@@ -72,11 +92,13 @@ internal class GameManager
     static void DisplayInventory()
     {
         Console.Clear();
-
-        Console.WriteLine("인벤토리");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("[인벤토리]");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+        Console.ResetColor();
 
-        inventory.DisplayItems(); //아이템 목록 표시
+        inventory.DisplayItemsEquip(false); //아이템 목록 표시
 
         Console.WriteLine("1.장착 관리");
         Console.WriteLine("0.나가기");
@@ -88,10 +110,12 @@ internal class GameManager
         switch (input)
         {
             case 0:
+                Console.Beep(300, 200);
                 DisplayGameIntro(); //게임 인트로창으로 돌아감
                 break;
 
             case 1:
+                Console.Beep(300, 200);
                 DisplayEquipInventory(); //인벤토리 - 장착 관리창 표시
                 break;
         }
@@ -101,11 +125,13 @@ internal class GameManager
     static void DisplayEquipInventory()
     {
         Console.Clear();
-
-        Console.WriteLine("인벤토리 - 장착 관리");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("[인벤토리 - 장착관리]");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+        Console.ResetColor();
 
-        inventory.DisplayItemsEquip(); //장착 관리용 아이템 목록 표시
+        inventory.DisplayItemsEquip(true); //장착 관리용 아이템 목록 표시
 
         Console.WriteLine("0.나가기");
         Console.WriteLine();
@@ -115,12 +141,43 @@ internal class GameManager
         int input = CheckValidInput(0, inventory.items.Count);
         if (input == 0)
         {
+            Console.Beep(300, 200);
             DisplayInventory();
             return;
         }
 
         inventory.ChangeEquip(input - 1, player); // 장착 상태 변경
         DisplayEquipInventory(); // 장착 상태에 따라 새로 업데이트된 창 표시
+    }
+
+    static void DisplayShop(Character player, Inventory inventory)
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("[상점]");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("가지고 있는 골드로 아이템을 구매할 수 있습니다.\n");
+        Console.ResetColor();
+
+        Shop shop = new Shop();
+        shop.DisplayShopItems(); // 상점에서 판매 중인 아이템 목록 표시
+
+        Console.WriteLine("0.나가기");
+        Console.WriteLine();
+        Console.WriteLine("원하시는 행동을 입력해주세요.");
+        Console.Write(">> ");
+
+        int input = CheckValidInput(0, inventory.items.Count);
+        if (input == 0)
+        {
+            Console.Beep(300, 200);
+            DisplayGameIntro();
+            return;
+        }
+
+        shop.BuyItem(input - 1, player, inventory); // 아이템 구매
+        Thread.Sleep(1000);
+        DisplayShop(player, inventory);
     }
 
     //입력값 검사 메서드, min과 max는 유효한 입력값의 범위
@@ -141,7 +198,11 @@ internal class GameManager
             }
 
             //입력이 정수가 아니거나 범위를 벗어난 경우 실행
-            Console.WriteLine("잘못된 입력입니다.\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            for (int i = 0; i < 2; i++)
+                Console.Beep();
+            Console.WriteLine("잘못된 입력입니다!\n");
+            Console.ResetColor();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
             Console.Write(">> ");
         }
@@ -152,8 +213,8 @@ internal class GameManager
 public class Character
 {
 
-    public string Name { get; }
-    public string Job { get; }
+    public string Name { get; set; }
+    public string Job { get; set; }
     public int Level { get; set; }
     public int Atk { get; set; }
     public int Def { get; set; }
@@ -183,6 +244,7 @@ public class Character
         string bonusAtkStr = "";
         string bonusDefStr = "";
 
+        
         //아이템을 장착하여 현재 수치와 초기 수치가 다른경우 추가 수치 표시
         if (Atk != initialAtk)
         {
@@ -192,32 +254,36 @@ public class Character
         {
             bonusDefStr = $"(+{Def - initialDef})";
         }
-   
-        return ($"{Name}({Job})\n" +
-               $"Lv.{Level}\n" +
-               $"공격력 : {Atk}{bonusAtkStr}\n" +
-               $"방어력 : {Def}{bonusDefStr}\n" +
-               $"체력 : {Hp}\n" +
-               $"Gold : {Gold} G");
+
+        return $"{Name}(Lv.{Level})\n" +
+                $"직업    : {Job}\n" +
+                $"공격력  : {Atk,-2}{bonusAtkStr}\n" +
+                $"방어력  : {Def,-2}{bonusDefStr}\n" +
+                $"체력    : {Hp}\n" +
+                $"골드    : {Gold} G";
     }
 }
 
 public class Item
 {
     //아이템 속성
-    public string Name { get; }
-    public string Description { get; }
-    public int BonusAtk { get; }
-    public int BonusDef { get; }
+    public string Name { get; set; }
+    public string EffectDescription { get; set; }
+    public string Description { get; set; }
+    public int BonusAtk { get; set; }
+    public int BonusDef { get; set; }
     public bool IsEquipped { get; set; }
+    public int Price { get; set; }
 
-    public Item(string name, string description, int bonusAtk, int bonusDef)
+    public Item(string name, string effectDescription, string description, int bonusAtk, int bonusDef, int price)
     {
         Name = name;
+        EffectDescription = effectDescription;
         Description = description;
         BonusAtk = bonusAtk;
         BonusDef = bonusDef;
         IsEquipped = false;
+        Price = price;
     }
 }
 
@@ -230,43 +296,40 @@ public class Inventory
     public Inventory()
     {
         items = new List<Item>();
-        items.Add(new Item("검", "공격력 +2 | 그냥 검이다.", 2, 0));
-        items.Add(new Item("갑옷",  "방어력 +5 | 그냥 갑옷이다.", 0, 5));
+        items.Add(new Item("Wood Sword", "ATK+2", "A normal wood sword.", 2, 0, 0));
+        items.Add(new Item("Wood Shield", "DEF+5", "A normal wood armor.", 0, 5, 0));
     }
 
     //인벤토리 아이템 리스트 출력
-    public void DisplayItems()
+    public void DisplayItemsEquip(bool showItemNumbers)
     {
-        Console.WriteLine("[아이템 목록]");
+
+        var table = new ConsoleTable("Name", "Effects", "Description");
+
         for (int i = 0; i < items.Count; i++)
         {
             string equippedSign = "";
             if (items[i].IsEquipped)
             {
                 equippedSign = "[E]";
+                
             }
-            Console.WriteLine($"- {equippedSign}{items[i].Name} | {items[i].Description}");
-        }
 
-        Console.WriteLine();
-    }
-
-    //인벤토리-장착관리 아이템 리스트 출력(번호만 추가한 버전)
-    public void DisplayItemsEquip()
-    {
-        Console.WriteLine("[아이템 목록]");
-        for (int i = 0; i < items.Count; i++)
-        {
-            string equippedSign = "";
-            if (items[i].IsEquipped)
+            string itemNumber = "";
+            if (showItemNumbers) //아이템 번호가 표시되는 경우
             {
-                equippedSign = "[E]";
+                itemNumber = $"{i + 1}.";
             }
-            Console.WriteLine($"- {i + 1}.{equippedSign}{items[i].Name} | {items[i].Description}");
-        }
 
-        Console.WriteLine();
+            string itemName = $"{itemNumber}{equippedSign}{items[i].Name}";
+            string itemEffect = items[i].EffectDescription;
+            string itemDescription = items[i].Description;
+
+            table.AddRow(itemName, itemEffect, itemDescription);
+        }
+        table.Write(Format.Alternative);
     }
+
 
     //특정 인덱스의 아이템의 장착 상태 변경
     public void ChangeEquip(int index, Character character)
@@ -285,6 +348,55 @@ public class Inventory
         {
             character.Atk -= item.BonusAtk;
             character.Def -= item.BonusDef;
+        }
+    }
+}
+
+public class Shop
+{
+    private List<Item> shopItems;
+
+    public Shop()
+    {
+        shopItems = new List<Item>();
+        shopItems.Add(new Item("Wood Spear", "ATK+3", "A normal wood spear.", 3, 0, 50));
+        shopItems.Add(new Item("Iron Sword", "ATK+5", "A normal iron sword.", 5, 0, 100));
+        shopItems.Add(new Item("Iron Shield", "DEF+10", "A normal iron shield.", 0, 10, 150));
+    }
+
+    public void DisplayShopItems()
+    {
+        var table = new ConsoleTable("Name", "Effects", "Description", "Price");
+
+        
+        for (int i = 0; i < shopItems.Count; i++)
+        {
+            string itemName = $"{i + 1}.{shopItems[i].Name}";
+            string itemEffect = shopItems[i].EffectDescription;
+            string itemDescription = shopItems[i].Description;
+            int itemPrice = shopItems[i].Price;
+
+            table.AddRow(itemName, itemEffect, itemDescription, itemPrice + "G");
+        }
+        table.Write(Format.Alternative);
+    }
+
+    public void BuyItem(int index, Character player, Inventory inventory)
+    {
+        Item selectedItem = shopItems[index]; // 선택한 상점 아이템 가져오기
+
+        if (player.Gold >= selectedItem.Price) // 골드가 충분한지 확인
+        {
+            player.Gold -= selectedItem.Price; // 골드 차감
+            inventory.items.Add(selectedItem); // 아이템 추가
+            Console.Beep(300, 200);
+            Console.WriteLine($"{selectedItem.Name}을(를) 구매했습니다.");
+            Console.WriteLine($"남은 골드: {player.Gold} G");
+        }
+        else
+        {
+            Console.Beep();
+            Console.WriteLine("골드가 부족합니다.");
         }
     }
 }
