@@ -2,7 +2,7 @@
 ### 개요
 - 프로젝트명 : TextRPG
 - 프로젝트 소개 : C# 콘솔로 플레이가 가능한 텍스트 rpg입니다.
-
+<br/><br/><br/>
   
 ### 구현 기능
 - 숫자를 통한 사용자 선택 입력
@@ -14,15 +14,15 @@
 - 콘솔 메시지 색상 변경 및 소리 출력
 - ConsoleTable 라이브러리를 활용한 표 형태의 아이템 리스트
 - 골드를 사용하여 아이템 구매가 가능한 상점 창
-
+<br/><br/><br/>
 
 ### 게임 화면
 ![ezgif-1-40948913f6](https://github.com/Nwjwifh/TextRPG/assets/111439484/377a57fd-3dae-4c54-b74a-d2eeeef927ba)
-
+<br/><br/><br/>
 
 ### 클래스 다이어그램
 ![제목 없는 다이어그램](https://github.com/Nwjwifh/TextRPG/assets/111439484/2245aa65-92b9-4ce9-bd19-cb63ba9c2a85)
-
+<br/><br/><br/>
 
 ### 사용 기술
 - C#
