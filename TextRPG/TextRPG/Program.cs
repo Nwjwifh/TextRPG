@@ -140,7 +140,7 @@ internal class GameManager
         Console.WriteLine("원하시는 행동을 입력해주세요.");
         Console.Write(">> ");
 
-        int input = CheckValidInput(0, shop.shopItems.Count);
+        int input = CheckValidInput(0, inventory.items.Count);
         if (input == 0)
         {
             Console.Beep(300, 200);
@@ -152,6 +152,7 @@ internal class GameManager
         DisplayEquipInventory(); // 장착 상태에 따라 새로 업데이트된 창 표시
     }
 
+    //상점 창 표시
     static void DisplayShop()
     {
         Console.Clear();
@@ -169,7 +170,7 @@ internal class GameManager
         Console.WriteLine("원하시는 행동을 입력해주세요.");
         Console.Write(">> ");
 
-        int input = CheckValidInput(0, inventory.items.Count);
+        int input = CheckValidInput(0, shop.shopItems.Count);
         if (input == 0)
         {
             Console.Beep(300, 200);
@@ -332,7 +333,7 @@ public class Inventory
     //특정 인덱스의 아이템의 장착 상태 변경
     public void ChangeEquip(int index, Character character)
     {
-        Item item = items[index]; // 아이템 클래스에서 선택한 아이템 가져오기
+        Item item = items[index]; // 선택한 아이템 가져오기
 
         // 아이템의 장착 상태 변경
         item.IsEquipped = !item.IsEquipped;
@@ -380,18 +381,18 @@ public class Shop
 
     public void BuyItem(int index, Character player, Inventory inventory)
     {
-        Item selectedItem = shopItems[index]; // 아이템 클래스에서 선택한 상점 아이템 가져오기
+        Item item = shopItems[index]; // 선택한 상점 아이템 가져오기
 
-        if (player.Gold >= selectedItem.Price) // 골드가 충분한지 확인
+        if (player.Gold >= item.Price) // 골드가 충분한지 확인
         {
-            player.Gold -= selectedItem.Price; // 골드 차감
-            inventory.items.Add(selectedItem); // 인벤토리에 아이템 추가
+            player.Gold -= item.Price; // 골드 차감
+            inventory.items.Add(item); // 인벤토리에 아이템 추가
 
             Console.Beep(300, 200);
-            Console.WriteLine($"{selectedItem.Name}을(를) 구매했습니다.");
+            Console.WriteLine($"{item.Name}을(를) 구매했습니다.");
             Console.WriteLine($"남은 골드: {player.Gold} G");
         }
-        else //구매 불가능의 경우
+        else // 골드가 불충분한 경우
         {
             Console.Beep();
             Console.WriteLine("골드가 부족합니다.");
