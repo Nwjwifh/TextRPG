@@ -333,7 +333,7 @@ public class Inventory
     //특정 인덱스의 아이템의 장착 상태 변경
     public void ChangeEquip(int index, Character character)
     {
-        Item item = items[index]; // 선택한 아이템 가져오기
+        Item item = items[index]; // 사용자가 선택한 아이템 가져오기
 
         // 아이템의 장착 상태 변경
         item.IsEquipped = !item.IsEquipped;
@@ -349,6 +349,12 @@ public class Inventory
             character.Def -= item.BonusDef;
         }
     }
+
+    //아이템 삭제
+    //public void ItemRemove(int index)
+    //{
+    //    items.RemoveAt(index);
+    //}
 }
 
 public class Shop
@@ -381,7 +387,7 @@ public class Shop
 
     public void BuyItem(int index, Character player, Inventory inventory)
     {
-        Item item = shopItems[index]; // 선택한 상점 아이템 가져오기
+        Item item = shopItems[index]; // 사용자가 선택한 상점 아이템 가져오기
 
         if (player.Gold >= item.Price) // 골드가 충분한지 확인
         {
